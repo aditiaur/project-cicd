@@ -58,9 +58,10 @@ pipeline {
                     git pull origin main
 
                     
-					sh '''
-                     sed -i 's#\(image: aditiaur12/project-cicd:\).*#\1'${BUILD_NUMBER}'#' spring-boot-app-manifests/deployment.yml
-                    '''
+					sh """
+                sed -i 's#\\(image: aditiaur12/project-cicd:\\).*#\\1${BUILD_NUMBER}#' spring-boot-app-manifests/deployment.yml
+                    """
+
 
 
                     cat spring-boot-app-manifests/deployment.yml
