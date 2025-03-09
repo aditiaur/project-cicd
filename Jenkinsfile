@@ -1,7 +1,7 @@
 pipeline {	
 	agent {
     docker {
-	    image 'maven:3.8.6-openjdk-17'
+	   image 'maven:3.8.6-eclipse-temurin-17'
         args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
     }
 }
