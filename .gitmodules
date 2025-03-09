@@ -1,3 +1,0 @@
-[submodule "cicd-project"]
-	path = cicd-project
-	url = https://github.com/aditiaur/cicd-project.git
