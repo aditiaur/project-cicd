@@ -9,18 +9,20 @@ pipeline {
     stages {
         stage('Cleanup') {
             steps {
-                sh 'rm -rf *'  // Deletes all files before checkout
-                sh 'echo "Workspace cleaned up"'
+                sh '''
+                echo "Cleaning up old files..."
+                sudo rm -rf spring-boot-app/target || echo "No previous build artifacts found"
+                '''
             }
         }
         
         stage('Checkout') {
             steps {
-                sh 'echo passed'
+                sh 'echo "Checking out the source code..."'
                 // Example: git branch: 'main', url: 'https://github.com/aditiaur/project-cicd.git'
             }
         }
-        
+
         stage('Build and Test') {
             steps {
                 sh 'ls -ltr'
