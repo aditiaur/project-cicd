@@ -1,24 +1,33 @@
 pipeline {	
-	agent {
-    docker {
-	   image 'maven:3.8.6-eclipse-temurin-17'
-        args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
+    agent {
+        docker {
+            image 'maven:3.8.6-eclipse-temurin-17'
+            args '--user root -v /var/run/docker.sock:/var/run/docker.sock'
+        }
     }
-}
 
     stages {
+        stage('Cleanup') {
+            steps {
+                sh 'rm -rf *'  // Deletes all files before checkout
+                sh 'echo "Workspace cleaned up"'
+            }
+        }
+        
         stage('Checkout') {
             steps {
                 sh 'echo passed'
                 // Example: git branch: 'main', url: 'https://github.com/aditiaur/project-cicd.git'
             }
         }
+        
         stage('Build and Test') {
             steps {
                 sh 'ls -ltr'
                 sh 'cd spring-boot-app && mvn clean package'
             }
         }
+
         stage('Static Code Analysis') {
             environment {
                 SONAR_URL = "http://3.6.89.55:9000/"
@@ -29,6 +38,7 @@ pipeline {
                 }
             }
         }
+
         stage('Build and Push Docker Image') {
             environment {
                 DOCKER_IMAGE = "aditiaur12/project-cicd:${BUILD_NUMBER}"
@@ -44,6 +54,7 @@ pipeline {
                 }
             }
         }
+
         stage('Update Deployment File') {
             environment {
                 GIT_REPO_NAME = "project-cicd"
@@ -58,12 +69,7 @@ pipeline {
                     git checkout main || git checkout -b main
                     git pull origin main
 
-                    
-					sh """
-                sed -i 's#\\(image: aditiaur12/project-cicd:\\).*#\\1${BUILD_NUMBER}#' spring-boot-app-manifests/deployment.yml
-                    """
-
-
+                    sed -i 's#\\(image: aditiaur12/project-cicd:\\).*#\\1${BUILD_NUMBER}#' spring-boot-app-manifests/deployment.yml
 
                     cat spring-boot-app-manifests/deployment.yml
 
